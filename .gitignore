@@ -1,0 +1,11 @@
+# Log files
+client/*.txt
+*.log
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local scripts / secrets
+upload_to_hf.py
+upload_to_github.py

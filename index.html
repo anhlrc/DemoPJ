@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triển Lãm Di Sản Số 3D | Không Gian Trưng Bày Ảo</title>
+    <meta name="description" content="Khám phá các hiện vật lịch sử và di sản số hóa bằng công nghệ quét 3D độ phân giải cao trong không gian tương tác ảo Three.js.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Background Decoration Grid & Gradients -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-grid"></div>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="logo">
+            <i class="fa-solid fa-cube logo-icon"></i>
+            <div class="logo-text">
+                <span class="logo-main">DI SẢN SỐ 3D</span>
+                <span class="logo-sub">VIRTUAL MUSEUM</span>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="#exhibition" class="nav-link active">Phòng Trưng Bày</a>
+            <a href="#catalog" class="nav-link">Bộ Sưu Tập</a>
+            <a href="#about" class="nav-link">Về Dự Án</a>
+        </nav>
+    </header>
+
+    <!-- Hero Introduction -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <span class="hero-badge"><i class="fa-solid fa-ribbon"></i> CÔNG NGHỆ SỐ HÓA DI SẢN</span>
+            <h1 class="hero-title">Không Gian Bảo Tàng Ảo</h1>
+            <p class="hero-tagline">Chiêm ngưỡng các hiện vật lịch sử được tái hiện sống động với độ chi tiết cực cao bằng công nghệ quét 3D laser và vân bề mặt chân thực.</p>
+            <div class="hero-actions">
+                <a href="#exhibition" class="btn btn-primary"><i class="fa-solid fa-vr-cardboard"></i> Khám Phá Ngay</a>
+                <a href="#catalog" class="btn btn-secondary"><i class="fa-solid fa-list-ul"></i> Xem Danh Sách</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Exhibition (3D Viewer and Details) -->
+    <section id="exhibition" class="exhibition-section">
+        <div class="section-container">
+            <h2 class="section-title">Trải Nghiệm Tương Tác 3D</h2>
+            
+            <div class="exhibition-wrapper">
+                <!-- 3D Canvas Container -->
+                <div class="viewer-container" id="viewer-container">
+                    <!-- Three.js Canvas will be appended here -->
+                    
+                    <!-- Loading overlay -->
+                    <div id="loader-overlay" class="loader-overlay">
+                        <div class="loader-content">
+                            <div class="loader-spinner-wrap">
+                                <div class="loader-spinner"></div>
+                                <i class="fa-solid fa-landmark loader-center-icon"></i>
+                            </div>
+                            <h3 id="loader-title">Đang tải hiện vật...</h3>
+                            <div class="progress-bar-container">
+                                <div id="progress-bar" class="progress-bar"></div>
+                            </div>
+                            <span id="progress-percent" class="progress-percent">0%</span>
+                            <p class="loader-tip"><i class="fa-solid fa-circle-info"></i> Bạn có thể dùng chuột trái để xoay, chuột phải để di chuyển, và con lăn để thu phóng khi tải xong.</p>
+                        </div>
+                    </div>
+
+                    <!-- Viewer Controls UI -->
+                    <div class="viewer-controls">
+                        <!-- Top HUD Info -->
+                        <div class="hud-top">
+                            <span id="active-item-badge" class="hud-badge"><i class="fa-solid fa-compass"></i> Đang hiển thị: <span id="active-item-name">Bình Tông</span></span>
+                        </div>
+
+                        <!-- Left Control Panel (Options) -->
+                        <div class="control-panel side-panel left-panel">
+                            <div class="panel-group">
+                                <h4><i class="fa-solid fa-paint-roller"></i> Dựng Hình</h4>
+                                <button class="btn-control active" id="btn-mode-texture" title="Chế độ vân màu sắc">
+                                    <i class="fa-solid fa-image"></i> Màu sắc
+                                </button>
+                                <button class="btn-control" id="btn-mode-clay" title="Chế độ đất sét xám">
+                                    <i class="fa-solid fa-fill-drip"></i> Đất sét
+                                </button>
+                                <button class="btn-control" id="btn-mode-points" title="Chế độ đám mây điểm">
+                                    <i class="fa-solid fa-braille"></i> Đám mây điểm
+                                </button>
+                                <button class="btn-control" id="btn-mode-wireframe" title="Chế độ lưới đa giác">
+                                    <i class="fa-solid fa-border-all"></i> Lưới (Wire)
+                                </button>
+                            </div>
+
+                            <div class="panel-group">
+                                <h4><i class="fa-solid fa-lightbulb"></i> Ánh Sáng</h4>
+                                <button class="btn-control active" id="btn-light-museum" title="Ánh sáng phòng trưng bày ấm áp">
+                                    <i class="fa-solid fa-sun"></i> Bảo tàng
+                                </button>
+                                <button class="btn-control" id="btn-light-studio" title="Ánh sáng studio trắng sáng">
+                                    <i class="fa-solid fa-flask"></i> Studio
+                                </button>
+                                <button class="btn-control" id="btn-light-dramatic" title="Ánh sáng tương phản cao">
+                                    <i class="fa-solid fa-moon"></i> Kịch tính
+                                </button>
+                            </div>
+
+                            <div class="panel-group">
+                                <h4><i class="fa-solid fa-arrows-spin"></i> Góc Đặt</h4>
+                                <div class="slider-control">
+                                    <label>Trục Y (Xoay Y): <span id="val-rot-y">0°</span></label>
+                                    <input type="range" id="slide-rot-y" min="-180" max="180" value="0">
+                                </div>
+                                <div class="slider-control">
+                                    <label>Trục X (Nghiêng X): <span id="val-rot-x">0°</span></label>
+                                    <input type="range" id="slide-rot-x" min="-90" max="90" value="0">
+                                </div>
+                                <div class="slider-control">
+                                    <label>Trục Z (Nghiêng Z): <span id="val-rot-z">0°</span></label>
+                                    <input type="range" id="slide-rot-z" min="-90" max="90" value="0">
+                                </div>
+                            </div>
+
+                            <div class="panel-group">
+                                <h4><i class="fa-solid fa-compass"></i> Hướng Nhìn</h4>
+                                <div class="view-grid">
+                                    <button class="btn-view-nav" id="btn-view-front" title="Nhìn từ phía trước">Trước</button>
+                                    <button class="btn-view-nav" id="btn-view-back" title="Nhìn từ phía sau">Sau</button>
+                                    <button class="btn-view-nav" id="btn-view-left" title="Nhìn từ bên trái">Trái</button>
+                                    <button class="btn-view-nav" id="btn-view-right" title="Nhìn từ bên phải">Phải</button>
+                                    <button class="btn-view-nav" id="btn-view-top" title="Nhìn từ trên xuống">Trên</button>
+                                    <button class="btn-view-nav" id="btn-view-bottom" title="Nhìn từ dưới lên">Dưới</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Controls HUD -->
+                        <div class="hud-bottom">
+                            <button class="btn-hud" id="btn-auto-rotate" title="Bật/Tắt Tự Động Xoay">
+                                <i class="fa-solid fa-rotate"></i> <span>Tự xoay</span>
+                            </button>
+                            <button class="btn-hud" id="btn-reset-cam" title="Đặt lại góc nhìn">
+                                <i class="fa-solid fa-arrows-to-eye"></i> <span>Đặt lại</span>
+                            </button>
+                            <button class="btn-hud" id="btn-fullscreen" title="Toàn màn hình">
+                                <i class="fa-solid fa-expand"></i> <span>Toàn màn hình</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Sidebar -->
+                <div class="info-sidebar">
+                    <div class="artifact-meta">
+                        <span class="artifact-category" id="artifact-category">Kỷ Vật Lịch Sử</span>
+                        <h3 class="artifact-title" id="artifact-title-display">Bình Tông Quân Nhu</h3>
+                        <div class="artifact-spec-grid">
+                            <div class="spec-item">
+                                <span class="spec-label">Chất liệu</span>
+                                <span class="spec-value" id="spec-material">Hợp kim / Nhôm</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Thời kỳ</span>
+                                <span class="spec-value" id="spec-period">Kháng chiến chống Mỹ</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Kích thước file 3D</span>
+                                <span class="spec-value" id="spec-filesize">~34.9 MB</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Quét thực tế</span>
+                                <span class="spec-value" id="spec-poly">Độ chi tiết cao</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="artifact-description">
+                        <h4>Mô tả lịch sử</h4>
+                        <div id="artifact-desc-content">
+                            <p>Bình tông quân nhu (còn gọi là bình đựng nước dã chiến) là một vật dụng vô cùng quen thuộc và gắn bó mật thiết với cuộc đời người lính trong suốt thời kỳ chiến tranh cứu nước. Chiếc bình được chế tác từ hợp kim nhôm bền nhẹ, có bao vải bọc ngoài cách nhiệt và quai đeo tiện lợi, giúp bảo quản nước uống trong suốt các cuộc hành quân gian khổ băng rừng lội suối.</p>
+                            <p>Không chỉ là vật dụng sinh hoạt thông thường, mỗi chiếc bình tông còn mang giá trị tinh thần lớn lao, lưu giữ những vết xước, những ký ức trận mạc và tình đồng chí chia ngọt sẻ bùi nơi chiến trường khốc liệt.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Artifact Catalog Grid -->
+    <section id="catalog" class="catalog-section">
+        <div class="section-container">
+            <h2 class="section-title">Danh Sách Hiện Vật Trưng Bày</h2>
+            <p class="section-subtitle">Lựa chọn các hiện vật dưới đây để tải trực tiếp lên trình tương tác 3D phía trên.</p>
+            
+            <div class="catalog-grid">
+                <!-- Card 1: Bình tông -->
+                <div class="catalog-card active" data-model-id="Binhtong">
+                    <div class="card-image-wrap">
+                        <div class="card-image-placeholder"><i class="fa-solid fa-flask-vine"></i></div>
+                        <img src="assets/models/Binhtong/Binhtong.jpg" alt="Bình tông" class="card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="card-img-fallback"><i class="fa-solid fa-cube"></i><span>Ảnh Quét 3D</span></div>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-tag">Quân nhu</span>
+                        <h3>Bình Tông Quân Nhu</h3>
+                        <p class="card-desc">Bình nước nhôm dã chiến, vật bất ly thân của các chiến sĩ hành quân xuyên rừng Trường Sơn.</p>
+                        <div class="card-footer">
+                            <span class="card-spec"><i class="fa-solid fa-weight-hanging"></i> 34.9 MB</span>
+                            <button class="btn-load"><i class="fa-solid fa-play"></i> Xem 3D</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Cám gắp -->
+                <div class="catalog-card" data-model-id="CAMGAP">
+                    <div class="card-image-wrap">
+                        <div class="card-image-placeholder"><i class="fa-solid fa-toolbox"></i></div>
+                        <img src="assets/models/CAMGAP/CAMGAP.jpg" alt="Cặp gắp cổ" class="card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="card-img-fallback"><i class="fa-solid fa-cube"></i><span>Ảnh Quét 3D</span></div>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-tag">Công cụ y tế / Kỹ thuật</span>
+                        <h3>Cặp Gắp Cổ</h3>
+                        <p class="card-desc">Thiết bị gắp hoặc kẹp cơ học bằng kim loại, được phục chế kỹ thuật số từ các công cụ thời kỳ trước.</p>
+                        <div class="card-footer">
+                            <span class="card-spec"><i class="fa-solid fa-weight-hanging"></i> 9.4 MB</span>
+                            <button class="btn-load"><i class="fa-solid fa-play"></i> Xem 3D</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Bao da -->
+                <div class="catalog-card" data-model-id="baoda">
+                    <div class="card-image-wrap">
+                        <div class="card-image-placeholder"><i class="fa-solid fa-folder-open"></i></div>
+                        <img src="assets/models/baoda/baoda.jpg" alt="Bao da" class="card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="card-img-fallback"><i class="fa-solid fa-cube"></i><span>Ảnh Quét 3D</span></div>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-tag">Trang bị</span>
+                        <h3>Bao Da Quân Sự</h3>
+                        <p class="card-desc">Bao đựng bằng da khâu tay bền bỉ dùng để bảo quản bản đồ, tài liệu hoặc trang bị cá nhân.</p>
+                        <div class="card-footer">
+                            <span class="card-spec"><i class="fa-solid fa-weight-hanging"></i> 21.8 MB</span>
+                            <button class="btn-load"><i class="fa-solid fa-play"></i> Xem 3D</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Camera -->
+                <div class="catalog-card" data-model-id="camera">
+                    <div class="card-image-wrap">
+                        <div class="card-image-placeholder"><i class="fa-solid fa-camera"></i></div>
+                        <img src="assets/models/camera/camera.jpg" alt="Máy ảnh cổ" class="card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="card-img-fallback"><i class="fa-solid fa-cube"></i><span>Ảnh Quét 3D</span></div>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-tag">Lưu niệm / Kỹ thuật</span>
+                        <h3>Máy Ảnh Cơ Cổ</h3>
+                        <p class="card-desc">Máy ảnh cơ khí chụp phim cổ điển, ghi lại những thước phim lịch sử vô giá thời chiến trận.</p>
+                        <div class="card-footer">
+                            <span class="card-spec"><i class="fa-solid fa-weight-hanging"></i> 15.9 MB</span>
+                            <button class="btn-load"><i class="fa-solid fa-play"></i> Xem 3D</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Project Section -->
+    <section id="about" class="about-section">
+        <div class="section-container">
+            <div class="about-grid">
+                <div class="about-info">
+                    <h2 class="section-title text-left">Về Dự Án Số Hóa</h2>
+                    <p>Dự án này ứng dụng công nghệ quét 3D tân tiến nhằm bảo tồn kỹ thuật số các hiện vật lịch sử quan trọng. Bằng cách tái tạo mô hình số hóa có độ trung thực cao cùng đầy đủ chất liệu vật lý gốc, chúng tôi mong muốn mang di sản đến gần hơn với công chúng dưới một góc nhìn trực quan, hiện đại và sinh động.</p>
+                    
+                    <div class="tech-stack">
+                        <h4>Công nghệ sử dụng:</h4>
+                        <div class="tech-icons">
+                            <div class="tech-item"><i class="fa-brands fa-html5"></i> <span>HTML5</span></div>
+                            <div class="tech-item"><i class="fa-brands fa-css3-alt"></i> <span>CSS3</span></div>
+                            <div class="tech-item"><i class="fa-brands fa-js"></i> <span>JavaScript</span></div>
+                            <div class="tech-item"><i class="fa-solid fa-cube"></i> <span>Three.js</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <span class="stat-num">4</span>
+                        <span class="stat-lbl">Hiện vật số hóa</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num">100%</span>
+                        <span class="stat-lbl">Tương tác ảo</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num">4K</span>
+                        <span class="stat-lbl">Độ phân giải vân màu</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Bảo Tàng Di Sản Số 3D. Tất cả quyền được bảo lưu.</p>
+            <p class="footer-tech">Xây dựng bằng <i class="fa-solid fa-heart text-red"></i> và Thư viện WebGL Three.js.</p>
+        </div>
+    </footer>
+
+    <!-- Three.js Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- Application Logic -->
+    <script src="app.js?v=1.1.6"></script>
+</body>
+</html>

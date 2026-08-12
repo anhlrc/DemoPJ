@@ -1,0 +1,6 @@
+client/*.txt
+__pycache__/
+*.pyc
+.git
+.gitignore
+upload_to_hf.py
